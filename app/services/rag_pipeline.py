@@ -7,7 +7,7 @@ class RAGPipeline:
     def __init__(self):
         self.embedder = Embedder("multi-qa-MiniLM-L6-cos-v1")
         self.store = ChromaStore("data/chroma")
-        self.llm = LLMClient("mistral")
+        self.llm = LLMClient()
 
     def query(self, question: str, k: int = 5) -> str:
         # 1. Embed the question

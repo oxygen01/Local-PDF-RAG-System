@@ -1,20 +1,19 @@
-import requests
-
+from groq import Groq
+import os
 
 class LLMClient:
-    def __init__(self, model: str = "phi"):
+    def __init__(self, model: str = "llama-3.3-70b-versatile"):
+        self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         self.model = model
-        self.base_url = "http://ollama:11434/api/generate"
 
     def generate(self, prompt: str) -> str:
-        payload = {"model": self.model, "prompt": prompt}
-        response = requests.post(self.base_url, json=payload, stream=True)
-
-        output = ""
-        for line in response.iter_lines():
-            if line:
-                data = line.decode("utf-8")
-                if '"response":"' in data:
-                    text = data.split('"response":"')[1].split('"')[0]
-                    output += text
-        return output.strip()
+        completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that answers using the provided context only."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2,
+            max_tokens=512,
+        )
+        return completion.choices[0].message.content.strip()
