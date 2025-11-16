@@ -1,15 +1,12 @@
 import chromadb
-from chromadb.utils import embedding_functions
-from pathlib import Path
 
 class ChromaStore:
-    def __init__(self, persist_directory: str = "data/chroma"):
-        Path(persist_directory).mkdir(parents=True, exist_ok=True)
-        self.client = chromadb.PersistentClient(path=persist_directory)
-        self.persist_directory = persist_directory
-        self.collection = self.client.get_or_create_collection(name="pdf_chunks", 
-                                                               # ensures cosine distance metric
-                                                               metadata={"hnsw:space": "cosine"})
+    def __init__(self):
+        self.client = chromadb.HttpClient(host="chroma", port=8000)
+        self.collection = self.client.get_or_create_collection(
+            name="pdf_chunks",
+            metadata={"hnsw:space": "cosine"}
+        )
 
     def add(
         self,

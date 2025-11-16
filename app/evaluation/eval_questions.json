@@ -1,0 +1,18 @@
+[
+  {
+    "question": "Who developed the Transformer architecture?",
+    "expected": "Ashish and Illia"
+  },
+  {
+    "question": "What problem does attention solve?",
+    "expected": "It allows the model to focus on important parts of the input sequence."
+  },
+  {
+    "question": "What are the main components of the Transformer?",
+    "expected": "Encoder, decoder, multi-head attention, feed-forward networks, positional encoding."
+  },
+  {
+    "question": "How does self-attention work?",
+    "expected": "It computes attention scores between all pairs of tokens to determine their relevance."
+  }
+]

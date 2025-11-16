@@ -11,21 +11,17 @@ services:
       - ./data:/app/data
     env_file:
       - .env
+    depends_on:
+      - chroma
     restart: always
-
-  # # ==========================
-  # #  CHROMA VECTOR DATABASE
-  # # ==========================
-  # # chroma:
-  # #   image: ghcr.io/chroma-core/chroma:latest
-  # #   container_name: chromadb
-  # #   ports:
-  # #     - "8001:8000"
-  # #   volumes:
-  # #     - ./data/chroma:/chroma/chroma
-  # #   environment:
-  # #     - IS_PERSISTENT=TRUE
-  # #   restart: always
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: chromadb_service
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./data/chroma:/chroma/chroma
+    restart: always
 
   # # ==========================
   # #  OLLAMA LOCAL LLM SERVICE

@@ -109,11 +109,6 @@ class TestChunker(unittest.TestCase):
 
         self.assertGreater(len(chunks), 1)
 
-        # Print chunks for debugging
-        print(f"\nOriginal text: '{text}'")
-        for i, chunk in enumerate(chunks):
-            print(f"Chunk {i + 1}: '{chunk.text}'")
-
         # Check that most chunks contain complete words
         # Allow some flexibility for edge cases but ensure no completely broken words
         single_letter_count = 0

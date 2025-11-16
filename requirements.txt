@@ -8,3 +8,7 @@ chromadb
 numpy
 rich
 groq
+ragas
+datasets
+tabulate
+nltk

@@ -4,7 +4,7 @@ from app.services.embedder import Embedder
 from app.services.chroma_store import ChromaStore
 from rich import print  # optional, for colored output
 from rich.console import Console
-
+import numpy as np
 
 def process_pdf(pdf_path: str = "app/files/attention.pdf"):
     # Extract text from PDF
@@ -16,46 +16,23 @@ def process_pdf(pdf_path: str = "app/files/attention.pdf"):
     # Prepare texts for embedding
     texts = [chunk.text for chunk in chunks]
     ids = [chunk.id for chunk in chunks]
-    metas = [{"page": chunk.page, "source": "nist_ai_framework"} for chunk in chunks]
+    metas = [{"page": chunk.page, "source": "transformer_paper"} for chunk in chunks]
 
     embedder = Embedder()
-
+    # 1. embed texts
     vectors = embedder.embed(texts)
+    # 2. normalize vectors (critical for cosine search!)
+    vectors = vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
 
     store = ChromaStore()
     store.add(ids=ids, texts=texts, metadatas=metas, embeddings=vectors)
+    print("✅ PDF processed and stored successfully.")
 
 
 def collection_count():
     store = ChromaStore()
     count = store.collection.count()
     print("Total documents in collection:", count)
-
-
-def pretty_print_results(results, top_k: int = 5):
-    """Nicely format and print Chroma retrieval results."""
-    if not results["documents"]:
-        print("[red]No results found.[/red]")
-        return
-
-    docs = results["documents"][0]
-    dists = results["distances"][0]
-    metas = results["metadatas"][0]
-
-    # Sort by distance (lowest = best)
-    ranked = sorted(zip(docs, dists, metas), key=lambda x: x[1])
-
-    console = Console()
-    console.print("[bold cyan]Top Retrieval Results[/bold cyan]")
-    console.print("-" * 60)
-
-    for i, (doc, dist, meta) in enumerate(ranked[:top_k], 1):
-        page = meta.get("page", "?")
-        source = meta.get("source", "?")
-        console.print(f"[bold]#{i}[/bold] (page {page}, source: {source})")
-        console.print(f"[green]Distance:[/green] {dist:.3f}")
-        console.print(f"{doc[:300]}{'...' if len(doc) > 300 else ''}")
-        console.print("-" * 60)
 
 
 def query_pdf(question: str = "What is attention mechanism?", top_k: int = 5):

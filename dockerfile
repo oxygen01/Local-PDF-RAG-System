@@ -5,13 +5,21 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Set git python refresh to quiet to avoid git warnings
+ENV GIT_PYTHON_REFRESH=quiet
+
 # Set work directory
 WORKDIR /app
+
+# Install system dependencies including git (required for RAGAS)
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN python -c "import nltk; nltk.download('punkt')"
 # Copy application code
 COPY ./app ./app
 
